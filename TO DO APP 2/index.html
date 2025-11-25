@@ -1,0 +1,300 @@
+<!DOCTYPE html> <!-- Ye document HTML5 hai -->
+<html lang="en"> <!-- Page language English set kiya -->
+<head>
+  <meta charset="utf-8" /> <!-- UTF-8 character encoding -->
+  <meta name="viewport" content="width=device-width,initial-scale=1" /> <!-- Responsive design ke liye viewport set -->
+  <title>To-Do — Styled Like Screenshot</title> <!-- Page ka title -->
+
+  <style>
+    /* Page background aur font styling */
+    body {
+      font-family: "Poppins", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial; /* Font family set kiya */
+      background: #fff; /* Page ka background white */
+      padding: 30px; /* Page ke charo taraf padding */
+      display: flex; /* Flexbox layout use kiya */
+      justify-content: center; /* Page content center me horizontally */
+      box-sizing: border-box; /* Padding aur border include ho width me */
+    }
+
+    /* Main page container */
+    .page {
+      width: 900px; /* Fixed width page */
+      max-width: 98%; /* Small screen me width adjust */
+      background: #ffffff; /* White background */
+      padding: 28px 36px; /* Inner padding */
+      box-sizing: border-box; /* Padding included in width */
+      box-shadow: 0 8px 30px rgba(0,0,0,0.06); /* Subtle shadow */
+      border-radius: 6px; /* Rounded corners */
+    }
+
+    /* Top input row */
+    .top-row {
+      display: flex; /* Flex layout input+button ke liye */
+      gap: 18px; /* Input aur button me gap */
+      align-items: center; /* Vertical center */
+      margin-bottom: 26px; /* Bottom space */
+      flex-wrap: wrap; /* Small screens me wrap ho jaye */
+    }
+
+    /* Task input box */
+    .task-input {
+      flex: 1; /* Bacha space le */
+      min-height: 56px; /* Minimum height input ka */
+      padding: 12px 16px; /* Inner padding */
+      font-size: 18px; /* Text size */
+      border: 3px solid #2fa86a; /* Green border */
+      border-radius: 6px; /* Rounded corners */
+      outline: none; /* Default outline remove */
+      box-sizing: border-box; /* Padding include width me */
+    }
+    .task-input::placeholder { color: #131212; } /* Placeholder text color */
+
+    /* Add Task button */
+    .add-btn {
+      background: #fb0b02; /* Pink color */
+      border: none; /* Border remove */
+      color: #fff; /* Text white */
+      padding: 14px 28px; /* Inner padding */
+      font-weight: 700; /* Bold text */
+      font-size: 18px; /* Font size */
+      border-radius: 8px; /* Rounded button */
+      cursor: pointer; /* Pointer cursor */
+      box-shadow: 0 4px 0 rgba(0,0,0,0.06); /* Slight bottom shadow */
+      transition: transform .08s ease; /* Button click animation */
+    }
+    .add-btn:active { transform: translateY(2px); } /* Button press effect */
+
+    /* Task list container */
+    .task-list {
+      display: flex; /* Flex column */
+      flex-direction: column; /* Vertical stacking */
+      gap: 16px; /* Task items me gap */
+    }
+
+    /* Single task item styling */
+    .task-item {
+      display: flex; /* Flex row for task+buttons */
+      align-items: center; /* Vertical align center */
+      justify-content: space-between; /* Task text aur buttons space */
+      padding: 20px 26px; /* Inner padding */
+      border: 3px solid #a4b0da; /* Blue border */
+      border-radius: 8px; /* Rounded corners */
+      background: #fff; /* White background */
+      box-sizing: border-box; /* Padding include width me */
+      min-height: 80px; /* Minimum height */
+      width: 100%; /* Full width */
+      transition: transform .28s ease, opacity .28s ease; /* Smooth removal animation */
+    }
+
+    /* Animated removal state */
+    .task-item.removing {
+      opacity: 0; /* Fade out */
+      transform: translateY(-8px) scale(0.995); /* Slight shrink & move up */
+    }
+
+    /* Task name styling */
+    .task-name {
+      font-size: 22px; /* Text size */
+      font-weight: 800; /* Bold text */
+      color: #ad8db8; /* Text color */
+      letter-spacing: 0.2px; /* Letter spacing */
+      margin: 0; /* Remove default margin */
+      word-break: break-word; /* Long words break */
+      max-width: 72%; /* Max width for task text */
+    }
+
+    /* Buttons container */
+    .task-actions {
+      display: flex; /* Flex row */
+      gap: 12px; /* Buttons me gap */
+      align-items: center; /* Vertical align */
+      flex-shrink: 0; /* Shrink na ho */
+    }
+
+    /* Complete button */
+    .complete-btn {
+      background: #27793a; /* Green */
+      color: white; /* Text white */
+      border: none; /* No border */
+      padding: 10px 16px; /* Padding */
+      font-weight: 700; /* Bold text */
+      border-radius: 6px; /* Rounded */
+      cursor: pointer; /* Pointer cursor */
+      font-size: 14px; /* Font size */
+      box-shadow: 0 3px 0 rgba(0,0,0,0.06); /* Shadow */
+    }
+
+    /* Delete button */
+    .delete-btn {
+      background: #e22121e4; /* Red color */
+      color: white; /* White text */
+      border: none; /* No border */
+      padding: 10px 16px; /* Padding */
+      font-weight: 700; /* Bold */
+      border-radius: 6px; /* Rounded */
+      cursor: pointer; /* Pointer */
+      font-size: 14px; /* Font size */
+      box-shadow: 0 3px 0 rgba(0,0,0,0.06); /* Shadow */
+    }
+
+    /* Hint text */
+    .hint {
+      margin-top: 18px; /* Top spacing */
+      color: #343333; /* Text color */
+      font-size: 14px; /* Small text */
+    }
+
+    /* Responsive */
+    @media (max-width: 860px) {
+      .page { padding: 18px; width: 96%; } /* Smaller page */
+      .task-name { font-size: 20px; max-width: 68%; } /* Task text smaller */
+      .task-input { font-size: 16px; min-height: 48px; } /* Input smaller */
+      .add-btn { padding: 12px 18px; font-size: 16px; } /* Button smaller */
+      .task-item { padding: 14px; min-height: 64px; } /* Task item smaller */
+    }
+
+    @media (max-width: 560px) {
+      .top-row { flex-direction: column; align-items: stretch; } /* Stack input+button vertically */
+      .add-btn { width: 100%; } /* Button full width */
+      .task-actions { gap: 8px; flex-shrink: 0; } /* Buttons closer */
+      .task-item { flex-direction: column; align-items: stretch; gap: 12px; } /* Stack buttons under task */
+      .task-actions { justify-content: flex-end; } /* Buttons right align */
+      .task-name { max-width: 100%; } /* Full width text */
+    }
+  </style>
+</head>
+<body>
+  <div class="page"> <!-- Main container -->
+    <div class="top-row"> <!-- Input row -->
+      <input id="taskInput" class="task-input" type="text" placeholder="Enter task name..." aria-label="New task name" /> <!-- Input box -->
+      <button id="addBtn" class="add-btn">Add Task</button> <!-- Add button -->
+    </div>
+
+    <div id="taskList" class="task-list" aria-live="polite" aria-atomic="false">
+      <!-- Task items dynamically inject honge -->
+    </div>
+
+    
+  <script>
+    const STORAGE_KEY = 'styled_todo_tasks_v1'; // localStorage key
+    let tasks = []; // Tasks array
+
+    const inputEl = document.getElementById('taskInput'); // Input element
+    const addBtn = document.getElementById('addBtn'); // Add button
+    const taskList = document.getElementById('taskList'); // Task list container
+
+    // Generate unique ID for task
+    function makeId() {
+      return 'id_' + Date.now().toString(36) + Math.random().toString(36).slice(2,8);
+    }
+
+    // Load tasks from localStorage
+    function load() {
+      try {
+        const raw = localStorage.getItem(STORAGE_KEY); // Get stored tasks
+        if (raw) {
+          const parsed = JSON.parse(raw); // Parse JSON
+          if (Array.isArray(parsed)) tasks = parsed; // Set tasks array
+        }
+      } catch(e) { tasks = []; console.warn(e); } // Error handling
+    }
+
+    // Save tasks to localStorage
+    function save() {
+      try { localStorage.setItem(STORAGE_KEY, JSON.stringify(tasks)); } catch(e) { console.warn(e); }
+    }
+
+    // Add new task
+    function addTask() {
+      const text = inputEl.value.trim(); // Get input value
+      if (!text) { alert('Please enter a task name'); return; } // Alert if empty
+      tasks.push({ id: makeId(), text }); // Push new task
+      inputEl.value = ''; // Clear input
+      render(); // Refresh UI
+      save(); // Save to storage
+      inputEl.focus(); // Focus input again
+    }
+
+    // Remove task with animation
+    function removeWithAnimation(id) {
+      const el = document.querySelector(`[data-id="${id}"]`); // Find element
+      if (el) {
+        el.classList.add('removing'); // Add fade class
+        setTimeout(() => {
+          tasks = tasks.filter(t => t.id !== id); // Remove from array
+          save(); // Save changes
+          render(); // Re-render
+        }, 300); // Wait for CSS animation
+      } else {
+        tasks = tasks.filter(t => t.id !== id); // Fallback
+        save();
+        render();
+      }
+    }
+
+    // Render tasks
+    function render() {
+      taskList.innerHTML = ''; // Clear container
+      if (tasks.length === 0) {
+        const empty = document.createElement('div'); // Show placeholder
+        empty.style.padding = '30px';
+        empty.style.textAlign = 'center';
+        empty.style.color = '#666';
+        empty.textContent = 'No tasks yet — add one above';
+        taskList.appendChild(empty);
+        return;
+      }
+
+      tasks.forEach((task, index) => { // index for numbering
+        const item = document.createElement('div'); // Task box
+        item.className = 'task-item';
+        item.setAttribute('data-id', task.id);
+
+        const left = document.createElement('div'); // Left text container
+        left.style.flex = '1';
+        left.style.minWidth = '0';
+
+        const name = document.createElement('p'); // Task text
+        name.className = 'task-name';
+        name.textContent = `${task.text}`; // Numbering added
+
+        left.appendChild(name);
+
+        const actions = document.createElement('div'); // Buttons container
+        actions.className = 'task-actions';
+
+        const completeBtn = document.createElement('button'); // Complete button
+        completeBtn.className = 'complete-btn';
+        completeBtn.textContent = 'Mark as Complete';
+        completeBtn.onclick = () => removeWithAnimation(task.id);
+
+        const deleteBtn = document.createElement('button'); // Delete button
+        deleteBtn.className = 'delete-btn';
+        deleteBtn.textContent = 'Delete';
+        deleteBtn.onclick = () => {
+          const ok = confirm('Delete this task?'); // Confirm delete
+          if (ok) removeWithAnimation(task.id); // Remove if confirmed
+        };
+
+        actions.appendChild(completeBtn); // Add buttons
+        actions.appendChild(deleteBtn);
+
+        item.appendChild(left); // Add text
+        item.appendChild(actions); // Add buttons
+
+        taskList.appendChild(item); // Append to task list
+      });
+    }
+
+    // Event listeners
+    addBtn.addEventListener('click', addTask); // Click add
+    inputEl.addEventListener('keydown', (e) => { // Enter key
+      if (e.key === 'Enter') addTask();
+    });
+
+    // Initialize app
+    load(); // Load tasks
+    render(); // Render UI
+  </script>
+</body>
+</html>
